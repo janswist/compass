@@ -1,0 +1,17 @@
+<resources>
+    <string name="app_name">Compass</string>
+
+    <!-- names -->
+    <string name="point">Wprowadź dane</string>
+    <string name="set_destination">Ustaw cel</string>
+    <string name="reset_destination">Resetuj</string>
+
+    <!-- hint messages -->
+    <string name="hint_latitude">Wprowadź szerokość geograficzną</string>
+    <string name="hint_longitude">Wprowadź długość geograficzną</string>
+
+    <!-- warning messages -->
+    <string name="wrong_coordinates">Nieprawidłowa współrzędna</string>
+    <string name="enter_coordinates">Wprowadź współrzędne</string>
+
+</resources>
