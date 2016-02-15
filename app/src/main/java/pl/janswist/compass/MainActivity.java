@@ -6,9 +6,10 @@ import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.ActivityOptionsCompat;
-import android.view.View;
-import android.widget.Button;
 
+import butterknife.Bind;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
 import pl.janswist.compass.lib.CompassSensorsActivity;
 import pl.janswist.compass.lib.CompassView;
 
@@ -17,47 +18,21 @@ import pl.janswist.compass.lib.CompassView;
  * */
 public class MainActivity extends CompassSensorsActivity {
 
-    private CompassView compassView;
+    @Bind(R.id.compassView) CompassView compassView;
     private Location userLocation, originObjectLocation;
     private LocationManager locationManager;
-    private Button btnSetDestination, btnResetDestination;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        ButterKnife.bind(this);
 
         locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
         userLocation = getBestLastKnowLocation(locationManager);
         originObjectLocation = getBestLastKnowLocation(locationManager);
 
-        compassView = (CompassView) findViewById(R.id.compassView);
         compassView.initializeCompass(userLocation, originObjectLocation, R.drawable.arrow);
-
-        btnSetDestination = (Button) findViewById(R.id.btnSetDest);
-        btnSetDestination.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent i = new Intent(MainActivity.this, DestinationSetter.class);
-
-                ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(
-                        MainActivity.this, findViewById(R.id.btnSetDest), "baton");
-
-                ActivityCompat.startActivityForResult(MainActivity.this,
-                        i, 77, options.toBundle());
-            }
-        });
-
-        btnResetDestination = (Button) findViewById(R.id.btnResetDest);
-        btnResetDestination.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                setNewDestination(
-                        getBestLastKnowLocation(locationManager).getLatitude(),
-                        getBestLastKnowLocation(locationManager).getLongitude());
-            }
-        });
     }
 
     @Override
@@ -70,6 +45,24 @@ public class MainActivity extends CompassSensorsActivity {
                 setNewDestination(newLatitude, newLongitude);
             }
         }
+    }
+
+    @OnClick(R.id.btnSetDest)
+    void setDestinationClick(){
+        Intent i = new Intent(MainActivity.this, DestinationSetter.class);
+
+        ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(
+                MainActivity.this, findViewById(R.id.btnSetDest), "baton");
+
+        ActivityCompat.startActivityForResult(MainActivity.this,
+                i, 77, options.toBundle());
+    }
+
+    @OnClick(R.id.btnResetDest)
+    void resetDestinationClick(){
+        setNewDestination(
+                getBestLastKnowLocation(locationManager).getLatitude(),
+                getBestLastKnowLocation(locationManager).getLongitude());
     }
 
     private void setNewDestination(double latitude, double longitude) {

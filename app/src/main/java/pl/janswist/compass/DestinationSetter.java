@@ -3,59 +3,55 @@ package pl.janswist.compass;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.view.View;
-import android.widget.Button;
 import android.widget.EditText;
+
+import butterknife.Bind;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
 
 /**
  * @author Jan Świst
  * */
 public class DestinationSetter extends AppCompatActivity {
 
-    private EditText etLat, etLon;
-    private Button btnSet;
+    @Bind(R.id.etLatitude) EditText etLat;
+    @Bind(R.id.etLongitude) EditText etLon;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.destination_setter);
+        ButterKnife.bind(this);
+    }
 
-        etLat = (EditText) findViewById(R.id.etLatitude);
-        etLon = (EditText) findViewById(R.id.etLongitude);
+    @OnClick(R.id.btnSet)
+    void setDestination(){
+        int latLength = etLat.getText().length();
+        int lonLength = etLon.getText().length();
 
-        btnSet = (Button) findViewById(R.id.btnSet);
-        btnSet.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+        if(latLength > 0 && lonLength > 0){
 
-                int latLength = etLat.getText().length();
-                int lonLength = etLon.getText().length();
+            double latitude = Double.valueOf(etLat.getText().toString());
+            double longitude = Double.valueOf(etLon.getText().toString());
 
-                if(latLength > 0 && lonLength > 0){
+            if(-180 <= latitude && latitude <= 180
+                    && -90 <= longitude && longitude <= 90){
 
-                    double latitude = Double.valueOf(etLat.getText().toString());
-                    double longitude = Double.valueOf(etLon.getText().toString());
+                Intent returnIntent = new Intent();
+                returnIntent.putExtra("latitude", latitude);
+                returnIntent.putExtra("longitude", longitude);
+                setResult(RESULT_OK, returnIntent);
+                finish();
 
-                    if(-180 <= latitude && latitude <= 180
-                            && -90 <= longitude && longitude <= 90){
+            } else {
 
-                        Intent returnIntent = new Intent();
-                        returnIntent.putExtra("latitude", latitude);
-                        returnIntent.putExtra("longitude", longitude);
-                        setResult(RESULT_OK, returnIntent);
-                        finish();
-
-                    } else {
-
-                        if(latitude > 180 || latitude < -180) etLat.setError(getResources().getString(R.string.wrong_coordinates));
-                        if(longitude > 90 || longitude < -90) etLon.setError(getResources().getString(R.string.wrong_coordinates));
-                    }
-
-                } else {
-                    if(latLength == 0) etLat.setError(getResources().getString(R.string.enter_coordinates));
-                    if(lonLength == 0) etLon.setError(getResources().getString(R.string.enter_coordinates));
-                }
+                if(latitude > 180 || latitude < -180) etLat.setError(getResources().getString(R.string.wrong_coordinates));
+                if(longitude > 90 || longitude < -90) etLon.setError(getResources().getString(R.string.wrong_coordinates));
             }
-        });
+
+        } else {
+            if(latLength == 0) etLat.setError(getResources().getString(R.string.enter_coordinates));
+            if(lonLength == 0) etLon.setError(getResources().getString(R.string.enter_coordinates));
+        }
     }
 }
